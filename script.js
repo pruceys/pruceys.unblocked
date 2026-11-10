@@ -1,4 +1,4 @@
-// ================= POKI & HIT GAMES DATABASE =================
+// ================= POKI GAMES MIRROR REPO =================
 const POKI_GAMES = [
   {
     id: "subway-surfers",
@@ -19,12 +19,6 @@ const POKI_GAMES = [
     url: "https://drivemad.net/game/drive-mad/"
   },
   {
-    id: "retro-bowl",
-    title: "Retro Bowl",
-    thumb: "https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?w=400&q=80",
-    url: "https://game316009.hostingerapp.com/"
-  },
-  {
     id: "stickman-hook",
     title: "Stickman Hook",
     thumb: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?w=400&q=80",
@@ -35,148 +29,284 @@ const POKI_GAMES = [
     title: "Tunnel Rush",
     thumb: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&q=80",
     url: "https://ubg77.github.io/edit/tunnel-rush/"
+  },
+  {
+    id: "retro-bowl",
+    title: "Retro Bowl",
+    thumb: "https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?w=400&q=80",
+    url: "https://game316009.hostingerapp.com/"
   }
 ];
 
-// App State (Saved in LocalStorage)
-let coins = parseInt(localStorage.getItem("prucey_coins"), 10) || 250;
+// ================= MOVIES & CINEMA =================
+const MOVIES = [
+  {
+    title: "Big Buck Bunny (Full Movie)",
+    thumb: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&q=80",
+    url: "https://www.youtube-nocookie.com/embed/aqz-KE-bpKQ?autoplay=1"
+  },
+  {
+    title: "Tears of Steel (Sci-Fi Short)",
+    thumb: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400&q=80",
+    url: "https://www.youtube-nocookie.com/embed/R6MlUcmOul8?autoplay=1"
+  },
+  {
+    title: "Open Cinema Stream Hub",
+    thumb: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=80",
+    url: "https://vidsrc.to"
+  }
+];
 
-// ================= INITIALIZATION =================
+// ================= LOFI STATIONS =================
+const TRACKS = [
+  { title: "Lofi Hip Hop Chill Beats", artist: "Lofi Girl Stream", src: "https://streams.ilovemusic.de/iloveradio17.mp3" },
+  { title: "Synthwave Gaming Chill", artist: "Retro Arcade", src: "https://stream.syntheticfm.com/stream" },
+  { title: "Calm Study Piano", artist: "Ambient Sound", src: "https://stream.zeno.fm/0r0xa792kwzuv" }
+];
+
+// Browser tabs state
+let browserTabs = [{ id: "tab-1", title: "Games", tabTarget: "games" }];
+let currentTabId = "tab-1";
+let currentTrackIdx = 0;
+
+// ================= INITIALIZE =================
 document.addEventListener("DOMContentLoaded", () => {
-  setupGamesSection();
-  setupNavigation();
+  setupAccount();
+  setupSidebarAndTabs();
+  setupPokiGames();
+  setupMovies();
+  setupMusicPlayer();
   setupMiniBrowser();
-  setupAIandChat();
-  setupShop();
-  setupSettingsAndPanic();
+  setupSeparateAI();
+  setupSeparateChat();
+  setupPanicAndCloaking();
 });
 
-// ================= TAB NAVIGATION =================
-function setupNavigation() {
-  const navItems = document.querySelectorAll(".nav-item");
-  const tabViews = document.querySelectorAll(".tab-view");
+// ================= ACCOUNT SYSTEM =================
+function setupAccount() {
+  const savedAccount = JSON.parse(localStorage.getItem("pruceys_account")) || {
+    name: "Guest Player",
+    seed: "Prucey"
+  };
 
-  navItems.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const targetTab = btn.getAttribute("data-tab");
+  function applyAccount(acc) {
+    const avatarUrl = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(acc.seed)}`;
+    document.getElementById("header-avatar").src = avatarUrl;
+    document.getElementById("profile-avatar-display").src = avatarUrl;
+    document.getElementById("header-username").textContent = acc.name;
+    document.getElementById("sidebar-user-label").textContent = acc.name;
+    document.getElementById("account-name-input").value = acc.name;
+    document.getElementById("account-seed-input").value = acc.seed;
+  }
 
-      navItems.forEach((i) => i.classList.remove("active"));
-      btn.classList.add("active");
+  applyAccount(savedAccount);
 
-      tabViews.forEach((view) => {
-        view.classList.toggle("active", view.id === `view-${targetTab}`);
-      });
-    });
+  document.getElementById("save-account-btn").addEventListener("click", () => {
+    const name = document.getElementById("account-name-input").value.trim() || "Player";
+    const seed = document.getElementById("account-seed-input").value.trim() || "Prucey";
+    const newAcc = { name, seed };
+    localStorage.setItem("pruceys_account", JSON.stringify(newAcc));
+    applyAccount(newAcc);
+    alert("Profile saved successfully!");
+  });
+
+  document.getElementById("quick-profile-btn").addEventListener("click", () => {
+    switchActiveView("account");
   });
 }
 
-// ================= GAMES SECTION =================
-function setupGamesSection() {
-  const searchInput = document.getElementById("game-search");
-  const gameModal = document.getElementById("game-modal");
-  const playerIframe = document.getElementById("player-iframe");
-  const modalClose = document.getElementById("modal-close");
-  const modalReload = document.getElementById("modal-reload");
-  const modalFs = document.getElementById("modal-fullscreen");
-
-  // Initial render
-  renderGames();
-
-  // Search filter
-  if (searchInput) {
-    searchInput.addEventListener("input", (e) => {
-      renderGames(e.target.value.trim());
+// ================= TABS & SIDEBAR =================
+function setupSidebarAndTabs() {
+  document.querySelectorAll(".sidebar-nav .nav-item, .sidebar-footer .nav-item").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const target = btn.getAttribute("data-tab");
+      switchActiveView(target);
+      updateTabTitle(currentTabId, btn.querySelector("span").textContent, target);
     });
-  }
+  });
 
-  // Close modal
-  if (modalClose) {
-    modalClose.addEventListener("click", () => {
-      if (gameModal) gameModal.classList.add("hidden");
-      if (playerIframe) playerIframe.src = "about:blank";
+  document.getElementById("add-tab-btn").addEventListener("click", () => {
+    const newId = `tab-${Date.now()}`;
+    browserTabs.push({ id: newId, title: "New Tab", tabTarget: "browser" });
+    currentTabId = newId;
+    renderTopTabs();
+    switchActiveView("browser");
+  });
+
+  renderTopTabs();
+}
+
+function switchActiveView(viewName) {
+  document.querySelectorAll(".tab-view").forEach(v => v.classList.remove("active"));
+  const targetView = document.getElementById(`view-${viewName}`);
+  if (targetView) targetView.classList.add("active");
+
+  document.querySelectorAll(".sidebar .nav-item").forEach(b => {
+    b.classList.toggle("active", b.getAttribute("data-tab") === viewName);
+  });
+}
+
+function renderTopTabs() {
+  const container = document.getElementById("tab-strip");
+  container.innerHTML = "";
+
+  browserTabs.forEach(t => {
+    const tabEl = document.createElement("div");
+    tabEl.className = `browser-tab ${t.id === currentTabId ? "active" : ""}`;
+
+    const label = document.createElement("span");
+    label.textContent = t.title;
+
+    const closeBtn = document.createElement("i");
+    closeBtn.className = "ri-close-line tab-close";
+    closeBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (browserTabs.length === 1) return;
+      browserTabs = browserTabs.filter(b => b.id !== t.id);
+      if (currentTabId === t.id) currentTabId = browserTabs[0].id;
+      renderTopTabs();
+      switchActiveView(browserTabs.find(b => b.id === currentTabId).tabTarget);
     });
-  }
 
-  // Reload active game
-  if (modalReload && playerIframe) {
-    modalReload.addEventListener("click", () => {
-      const current = playerIframe.src;
-      playerIframe.src = "about:blank";
-      setTimeout(() => { playerIframe.src = current; }, 50);
+    tabEl.append(label, closeBtn);
+    tabEl.addEventListener("click", () => {
+      currentTabId = t.id;
+      renderTopTabs();
+      switchActiveView(t.tabTarget);
     });
-  }
 
-  // Fullscreen player
-  if (modalFs) {
-    modalFs.addEventListener("click", () => {
-      const container = document.getElementById("player-container");
-      if (!container) return;
+    container.appendChild(tabEl);
+  });
+}
 
-      if (!document.fullscreenElement) {
-        container.requestFullscreen?.();
-      } else {
-        document.exitFullscreen?.();
-      }
-    });
+function updateTabTitle(id, newTitle, newTarget) {
+  const tab = browserTabs.find(t => t.id === id);
+  if (tab) {
+    tab.title = newTitle;
+    tab.tabTarget = newTarget;
+    renderTopTabs();
   }
 }
 
-function renderGames(filter = "") {
+// ================= POKI GAMES =================
+function setupPokiGames() {
   const grid = document.getElementById("games-grid");
-  if (!grid) return;
+  const search = document.getElementById("game-search");
+
+  function render(list) {
+    grid.innerHTML = "";
+    list.forEach(game => {
+      const card = document.createElement("div");
+      card.className = "interactive-card";
+      card.innerHTML = `
+        <img src="${game.thumb}" alt="${game.title}" loading="lazy">
+        <div class="card-title">${game.title}</div>
+      `;
+      card.addEventListener("click", () => openMediaModal(game.title, game.url));
+      grid.appendChild(card);
+    });
+  }
+
+  render(POKI_GAMES);
+
+  search.addEventListener("input", (e) => {
+    const val = e.target.value.toLowerCase();
+    render(POKI_GAMES.filter(g => g.title.toLowerCase().includes(val)));
+  });
+}
+
+// ================= MOVIES =================
+function setupMovies() {
+  const grid = document.getElementById("movies-grid");
   grid.innerHTML = "";
 
-  const filtered = POKI_GAMES.filter((g) =>
-    g.title.toLowerCase().includes(filter.toLowerCase())
-  );
-
-  filtered.forEach((game) => {
+  MOVIES.forEach(m => {
     const card = document.createElement("div");
-    card.className = "game-card";
-
-    const img = document.createElement("img");
-    img.src = game.thumb;
-    img.alt = game.title;
-    img.loading = "lazy";
-
-    const title = document.createElement("div");
-    title.className = "game-card-title";
-    title.textContent = game.title;
-
-    card.append(img, title);
-    card.addEventListener("click", () => launchGame(game));
+    card.className = "interactive-card";
+    card.innerHTML = `
+      <img src="${m.thumb}" alt="${m.title}">
+      <div class="card-title">${m.title}</div>
+    `;
+    card.addEventListener("click", () => openMediaModal(m.title, m.url));
     grid.appendChild(card);
   });
 }
 
-function launchGame(game) {
-  const gameModal = document.getElementById("game-modal");
-  const playerIframe = document.getElementById("player-iframe");
-  const playerTitle = document.getElementById("player-game-title");
+// ================= MUSIC PLAYER =================
+function setupMusicPlayer() {
+  const audio = document.getElementById("audio-player");
+  const playBtn = document.getElementById("play-track-btn");
+  const playIcon = document.getElementById("play-icon");
+  const vinyl = document.getElementById("vinyl-disc");
+  const tracksContainer = document.getElementById("tracks-list");
+  const volumeSlider = document.getElementById("music-volume");
 
-  if (playerTitle) playerTitle.textContent = game.title;
-  if (playerIframe) playerIframe.src = game.url;
-  if (gameModal) gameModal.classList.remove("hidden");
+  function loadTrack(index) {
+    currentTrackIdx = index;
+    const track = TRACKS[index];
+    audio.src = track.src;
+    document.getElementById("current-track-title").textContent = track.title;
+    document.getElementById("current-track-artist").textContent = track.artist;
+    updateTracklistUI();
+  }
 
-  // Reward coins for launching a game
-  coins += 10;
-  updateCoins();
+  function updateTracklistUI() {
+    tracksContainer.innerHTML = "";
+    TRACKS.forEach((t, i) => {
+      const item = document.createElement("div");
+      item.className = `track-item ${i === currentTrackIdx ? "active" : ""}`;
+      item.innerHTML = `<span>${t.title}</span><small>${t.artist}</small>`;
+      item.addEventListener("click", () => {
+        loadTrack(i);
+        audio.play();
+        playIcon.className = "ri-pause-fill";
+        vinyl.classList.add("spinning");
+      });
+      tracksContainer.appendChild(item);
+    });
+  }
+
+  playBtn.addEventListener("click", () => {
+    if (audio.paused) {
+      audio.play();
+      playIcon.className = "ri-pause-fill";
+      vinyl.classList.add("spinning");
+    } else {
+      audio.pause();
+      playIcon.className = "ri-play-fill";
+      vinyl.classList.remove("spinning");
+    }
+  });
+
+  document.getElementById("next-track-btn").addEventListener("click", () => {
+    currentTrackIdx = (currentTrackIdx + 1) % TRACKS.length;
+    loadTrack(currentTrackIdx);
+    audio.play();
+  });
+
+  document.getElementById("prev-track-btn").addEventListener("click", () => {
+    currentTrackIdx = (currentTrackIdx - 1 + TRACKS.length) % TRACKS.length;
+    loadTrack(currentTrackIdx);
+    audio.play();
+  });
+
+  volumeSlider.addEventListener("input", (e) => {
+    audio.volume = e.target.value;
+  });
+
+  loadTrack(0);
 }
 
 // ================= MINI BROWSER =================
 function setupMiniBrowser() {
   const frame = document.getElementById("browser-frame");
   const input = document.getElementById("browser-url");
-  const goBtn = document.getElementById("browser-go");
-  const reloadBtn = document.getElementById("b-reload");
-  const fsBtn = document.getElementById("browser-fullscreen");
+  const go = document.getElementById("browser-go");
+  const reload = document.getElementById("b-reload");
 
-  if (!frame || !input) return;
-
-  function loadURL(rawUrl) {
-    let url = rawUrl.trim();
+  function navigate(raw) {
+    let url = raw.trim();
     if (!url) return;
-
     if (!url.startsWith("http://") && !url.startsWith("https://")) {
       url = `https://duckduckgo.com/?q=${encodeURIComponent(url)}&kae=d`;
     }
@@ -184,170 +314,114 @@ function setupMiniBrowser() {
     frame.src = url;
   }
 
-  if (goBtn) goBtn.addEventListener("click", () => loadURL(input.value));
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") loadURL(input.value);
-  });
+  go.addEventListener("click", () => navigate(input.value));
+  input.addEventListener("keydown", (e) => { if (e.key === "Enter") navigate(input.value); });
+  reload.addEventListener("click", () => { frame.src = frame.src; });
 
-  if (reloadBtn) {
-    reloadBtn.addEventListener("click", () => {
-      const current = frame.src;
-      frame.src = "about:blank";
-      setTimeout(() => { frame.src = current; }, 50);
-    });
-  }
-
-  if (fsBtn) {
-    fsBtn.addEventListener("click", () => {
-      frame.requestFullscreen?.();
-    });
-  }
-
-  // Bookmarks
-  document.querySelectorAll(".b-mark").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const url = btn.getAttribute("data-url");
-      if (url) loadURL(url);
-    });
+  document.querySelectorAll(".b-mark").forEach(b => {
+    b.addEventListener("click", () => navigate(b.getAttribute("data-url")));
   });
 }
 
-// ================= AI ASSISTANT & CHAT ROOM =================
-function setupAIandChat() {
-  function appendMessage(container, text, type, prefix = "") {
-    if (!container) return;
-    const bubble = document.createElement("div");
-    bubble.className = `chat-bubble ${type}`;
+// ================= SEPARATE AI ASSISTANT =================
+function setupSeparateAI() {
+  const input = document.getElementById("ai-input");
+  const btn = document.getElementById("ai-send-btn");
+  const box = document.getElementById("ai-messages");
 
-    if (prefix) {
-      const strong = document.createElement("strong");
-      strong.textContent = prefix + " ";
-      bubble.appendChild(strong);
-    }
-
-    bubble.appendChild(document.createTextNode(text));
-    container.appendChild(bubble);
-    container.scrollTop = container.scrollHeight;
-  }
-
-  // AI Chat
-  const aiInput = document.getElementById("ai-input");
-  const aiSend = document.getElementById("ai-send-btn");
-  const aiBox = document.getElementById("ai-messages");
-
-  function sendAIMsg() {
-    if (!aiInput || !aiBox) return;
-    const text = aiInput.value.trim();
+  function send() {
+    const text = input.value.trim();
     if (!text) return;
-
-    appendMessage(aiBox, text, "user");
-    aiInput.value = "";
+    appendBubble(box, text, "user");
+    input.value = "";
 
     setTimeout(() => {
-      const replies = [
-        "That's a great strategy! Focus on timing your jumps for a high score.",
-        "Check the settings tab if you need to quickly disguise your active window.",
-        "Need game recommendations? Drive Mad and Subway Surfers are trending right now!",
-        "I'm here to help you navigate and multitask efficiently."
+      const answers = [
+        "Pruceys Unblocked+ is running smooth! Subway Surfers or Drive Mad are top picks right now.",
+        "Remember to use the Tab Cloaker in Settings if you need to hide your active window.",
+        "I'm here to answer study questions or help you navigate games!"
       ];
-      const botResponse = replies[Math.floor(Math.random() * replies.length)];
-      appendMessage(aiBox, botResponse, "ai", "Prucey AI:");
-    }, 600);
+      appendBubble(box, answers[Math.floor(Math.random() * answers.length)], "ai");
+    }, 500);
   }
 
-  if (aiSend) aiSend.addEventListener("click", sendAIMsg);
-  if (aiInput) {
-    aiInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") sendAIMsg();
-    });
-  }
+  btn.addEventListener("click", send);
+  input.addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
+}
 
-  // Public Chat Room
-  const roomInput = document.getElementById("room-input");
-  const roomSend = document.getElementById("room-send-btn");
-  const roomBox = document.getElementById("room-messages");
+// ================= SEPARATE PUBLIC CHAT =================
+function setupSeparateChat() {
+  const input = document.getElementById("room-input");
+  const btn = document.getElementById("room-send-btn");
+  const box = document.getElementById("room-messages");
 
-  function sendRoomMsg() {
-    if (!roomInput || !roomBox) return;
-    const text = roomInput.value.trim();
+  function send() {
+    const text = input.value.trim();
     if (!text) return;
 
-    appendMessage(roomBox, text, "user");
-    roomInput.value = "";
+    const acc = JSON.parse(localStorage.getItem("pruceys_account")) || { name: "Player" };
+    appendBubble(box, `${acc.name}: ${text}`, "room");
+    input.value = "";
   }
 
-  if (roomSend) roomSend.addEventListener("click", sendRoomMsg);
-  if (roomInput) {
-    roomInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") sendRoomMsg();
-    });
-  }
+  btn.addEventListener("click", send);
+  input.addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
 }
 
-// ================= SHOP LOGIC =================
-function setupShop() {
-  updateCoins();
-
-  document.querySelectorAll(".buy-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const cost = parseInt(btn.getAttribute("data-cost"), 10) || 0;
-      if (coins >= cost) {
-        coins -= cost;
-        updateCoins();
-        btn.textContent = "Purchased!";
-        btn.style.background = "#22c55e";
-        btn.disabled = true;
-      } else {
-        alert("Not enough Coins! Play games to earn more.");
-      }
-    });
-  });
+function appendBubble(container, text, type) {
+  const el = document.createElement("div");
+  el.className = `chat-bubble ${type}`;
+  el.textContent = text;
+  container.appendChild(el);
+  container.scrollTop = container.scrollHeight;
 }
 
-function updateCoins() {
-  localStorage.setItem("prucey_coins", coins);
-  const userCoins = document.getElementById("user-coins");
-  const statCoins = document.getElementById("stat-coins");
-
-  if (userCoins) userCoins.textContent = coins;
-  if (statCoins) statCoins.textContent = coins;
+// ================= MODAL MEDIA CONTROLLER =================
+function openMediaModal(title, url) {
+  const modal = document.getElementById("media-modal");
+  const iframe = document.getElementById("media-iframe");
+  document.getElementById("modal-title").textContent = title;
+  iframe.src = url;
+  modal.classList.remove("hidden");
 }
 
-// ================= SETTINGS, TAB CLOAK & PANIC =================
-function setupSettingsAndPanic() {
-  const panicBtn = document.getElementById("panic-btn");
-  const panicUrlInput = document.getElementById("panic-url");
+document.getElementById("modal-close").addEventListener("click", () => {
+  document.getElementById("media-modal").classList.add("hidden");
+  document.getElementById("media-iframe").src = "about:blank";
+});
 
+document.getElementById("modal-reload").addEventListener("click", () => {
+  const frame = document.getElementById("media-iframe");
+  const cur = frame.src;
+  frame.src = "about:blank";
+  setTimeout(() => { frame.src = cur; }, 50);
+});
+
+document.getElementById("modal-fullscreen").addEventListener("click", () => {
+  const container = document.getElementById("media-container");
+  if (!document.fullscreenElement) container.requestFullscreen?.();
+  else document.exitFullscreen?.();
+});
+
+// ================= PANIC SWITCH & CLOAKER =================
+function setupPanicAndCloaking() {
   function triggerPanic() {
-    const redirect = (panicUrlInput && panicUrlInput.value.trim()) || "https://classroom.google.com";
-    window.location.replace(redirect);
+    const url = document.getElementById("panic-url").value.trim() || "https://classroom.google.com";
+    window.location.replace(url);
   }
 
-  if (panicBtn) panicBtn.addEventListener("click", triggerPanic);
+  document.getElementById("panic-btn").addEventListener("click", triggerPanic);
+  document.getElementById("header-panic-btn").addEventListener("click", triggerPanic);
 
-  // Panic hotkey: ` or ~ (Ignored when typing in inputs/textareas)
   window.addEventListener("keydown", (e) => {
     if (["INPUT", "TEXTAREA"].includes(e.target.tagName)) return;
-    if (e.key === "`" || e.key === "~") {
-      triggerPanic();
-    }
+    if (e.key === "`" || e.key === "~") triggerPanic();
   });
 
-  // Cloaker presets
-  document.querySelectorAll(".cloak-btn").forEach((btn) => {
+  document.querySelectorAll(".cloak-btn").forEach(btn => {
     btn.addEventListener("click", () => {
-      const title = btn.getAttribute("data-title");
-      const icon = btn.getAttribute("data-icon");
-      if (title) document.title = title;
-
-      let favicon = document.getElementById("page-favicon");
-      if (!favicon) {
-        favicon = document.createElement("link");
-        favicon.id = "page-favicon";
-        favicon.rel = "icon";
-        document.head.appendChild(favicon);
-      }
-      if (icon) favicon.href = icon;
+      document.title = btn.getAttribute("data-title");
+      document.getElementById("page-favicon").href = btn.getAttribute("data-icon");
     });
   });
 }
