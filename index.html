@@ -6,12 +6,10 @@
   <title>Pruceys Unblocked+</title>
   <link rel="icon" id="page-favicon" href="https://img.icons8.com/fluency/48/controller.png">
   <link rel="stylesheet" href="style.css">
-  <!-- Remix Icons for crisp UI icons -->
   <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 </head>
 <body>
 
-  <!-- App Wrapper -->
   <div class="app-layout">
     
     <!-- LEFT SIDEBAR -->
@@ -31,11 +29,8 @@
         <button class="nav-item" data-tab="browser">
           <i class="ri-compass-3-fill"></i><span>Web Proxy</span>
         </button>
-        <button class="nav-item" data-tab="movies">
-          <i class="ri-film-fill"></i><span>Cinema & Shows</span>
-        </button>
         <button class="nav-item" data-tab="music">
-          <i class="ri-music-2-fill"></i><span>Lofi & Music</span>
+          <i class="ri-spotify-fill" style="color: #1db954;"></i><span>Spotify Music</span>
         </button>
         <button class="nav-item" data-tab="ai">
           <i class="ri-robot-2-fill"></i><span>AI Assistant</span>
@@ -50,7 +45,7 @@
           <i class="ri-user-smile-fill"></i><span id="sidebar-user-label">My Account</span>
         </button>
         <button class="nav-item" data-tab="settings">
-          <i class="ri-settings-4-fill"></i><span>Settings & Cloak</span>
+          <i class="ri-shield-keyhole-fill"></i><span>Tab Cloaker</span>
         </button>
       </div>
     </aside>
@@ -61,7 +56,7 @@
       <!-- TOP BROWSER-STYLE TAB BAR -->
       <header class="top-bar">
         <div class="browser-tabs" id="tab-strip">
-          <!-- Dynamic browser tabs render here -->
+          <!-- Browser tabs render dynamically here -->
         </div>
         <button class="new-tab-btn" id="add-tab-btn" title="New Tab"><i class="ri-add-line"></i></button>
 
@@ -70,9 +65,6 @@
             <img id="header-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=Prucey" alt="Avatar">
             <span id="header-username">Guest</span>
           </div>
-          <button class="panic-quick-btn" id="header-panic-btn" title="Quick Panic (` or ~)">
-            <i class="ri-alarm-warning-fill"></i> Panic
-          </button>
         </div>
       </header>
 
@@ -83,12 +75,15 @@
         <section id="view-games" class="tab-view active">
           <div class="view-header">
             <div>
-              <h2>Featured Poki Hits</h2>
-              <p class="subtitle">Direct mirrors of popular Poki HTML5 games.</p>
+              <h2>Poki Games Portal</h2>
+              <p class="subtitle">Play full Poki games directly in your browser.</p>
             </div>
-            <div class="search-box">
-              <i class="ri-search-line"></i>
-              <input type="text" id="game-search" placeholder="Search Poki games...">
+            <div class="header-actions">
+              <button id="open-poki-frame-btn" class="secondary-btn"><i class="ri-external-link-line"></i> Open Poki.com Site</button>
+              <div class="search-box">
+                <i class="ri-search-line"></i>
+                <input type="text" id="game-search" placeholder="Search Poki games...">
+              </div>
             </div>
           </div>
           <div id="games-grid" class="cards-grid"></div>
@@ -97,7 +92,6 @@
         <!-- 2. MINI BROWSER VIEW -->
         <section id="view-browser" class="tab-view">
           <div class="browser-controls">
-            <button id="b-back" class="icon-btn" title="Back"><i class="ri-arrow-left-line"></i></button>
             <button id="b-reload" class="icon-btn" title="Reload"><i class="ri-refresh-line"></i></button>
             <div class="url-input-wrap">
               <i class="ri-lock-fill"></i>
@@ -110,103 +104,103 @@
             <button class="b-mark" data-url="https://duckduckgo.com"><i class="ri-search-2-line"></i> DuckDuckGo</button>
             <button class="b-mark" data-url="https://bing.com"><i class="ri-global-line"></i> Bing</button>
             <button class="b-mark" data-url="https://en.wikipedia.org"><i class="ri-book-read-line"></i> Wikipedia</button>
-            <button class="b-mark" data-url="https://scratch.mit.edu"><i class="ri-code-box-line"></i> Scratch</button>
           </div>
           <div class="iframe-container">
             <iframe id="browser-frame" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
           </div>
         </section>
 
-        <!-- 3. MOVIES & SHOWS VIEW -->
-        <section id="view-movies" class="tab-view">
-          <div class="view-header">
-            <div>
-              <h2>Pruceys Cinema</h2>
-              <p class="subtitle">Watch movies and popular trailers directly.</p>
-            </div>
-          </div>
-          <div id="movies-grid" class="cards-grid"></div>
-        </section>
-
-        <!-- 4. MUSIC PLAYER VIEW -->
+        <!-- 3. SPOTIFY MUSIC VIEW -->
         <section id="view-music" class="tab-view">
-          <div class="music-station">
-            <div class="now-playing-card">
-              <div class="vinyl-art" id="vinyl-disc">
-                <i class="ri-disc-fill"></i>
+          <div class="spotify-container">
+            <div class="spotify-header-banner">
+              <div class="spotify-banner-info">
+                <div class="spotify-logo-wrap"><i class="ri-spotify-fill"></i></div>
+                <div>
+                  <h2>Spotify Player</h2>
+                  <p class="subtitle">Stream official playlists or open the Spotify web login.</p>
+                </div>
               </div>
-              <h3 id="current-track-title">Chill Lofi Radio</h3>
-              <p id="current-track-artist">Lofi Boy Beats</p>
-              
-              <div class="music-controls">
-                <button id="prev-track-btn" class="icon-btn"><i class="ri-skip-back-fill"></i></button>
-                <button id="play-track-btn" class="icon-btn play-btn"><i class="ri-play-fill" id="play-icon"></i></button>
-                <button id="next-track-btn" class="icon-btn"><i class="ri-skip-forward-fill"></i></button>
+              <div class="spotify-banner-btns">
+                <button id="open-spotify-login" class="spotify-btn">
+                  <i class="ri-login-box-line"></i> Open Spotify Login
+                </button>
+                <button id="open-spotify-web" class="secondary-btn">
+                  <i class="ri-external-link-line"></i> Launch Web App
+                </button>
               </div>
-
-              <div class="volume-slider-wrap">
-                <i class="ri-volume-down-fill"></i>
-                <input type="range" id="music-volume" min="0" max="1" step="0.05" value="0.7">
-                <i class="ri-volume-up-fill"></i>
-              </div>
-              <audio id="audio-player"></audio>
             </div>
 
-            <div class="tracklist-card">
-              <h3>Station Channels</h3>
-              <div class="tracks-list" id="tracks-list"></div>
+            <!-- Playlist Selector Buttons -->
+            <div class="spotify-playlists-nav">
+              <button class="spotify-tab-btn active" data-spotify="playlist/37i9dQZF1DXcBWIGoYBM5M">🔥 Today's Top Hits</button>
+              <button class="spotify-tab-btn" data-spotify="playlist/37i9dQZF1DX0XUsuxWHRQd">⚡ RapCaviar</button>
+              <button class="spotify-tab-btn" data-spotify="playlist/37i9dQZF1DX4JAvHpjipBk">🎧 Chill Instrumental</button>
+              <button class="spotify-tab-btn" data-spotify="playlist/37i9dQZF1DX1lVhptIYRda">🎮 Gaming Lounge</button>
+            </div>
+
+            <!-- Spotify Official Interactive Player Embed -->
+            <div class="spotify-embed-card">
+              <iframe 
+                id="spotify-iframe" 
+                src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator&theme=0" 
+                width="100%" 
+                height="450" 
+                frameBorder="0" 
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                loading="lazy">
+              </iframe>
             </div>
           </div>
         </section>
 
-        <!-- 5. AI ASSISTANT VIEW -->
+        <!-- 4. AI ASSISTANT VIEW -->
         <section id="view-ai" class="tab-view">
           <div class="chat-container">
             <div class="chat-header">
               <i class="ri-robot-2-fill"></i>
               <div>
                 <h3>Prucey AI</h3>
-                <span class="status-online">Online</span>
+                <span class="status-online">Active</span>
               </div>
             </div>
             <div id="ai-messages" class="messages-flow"></div>
             <div class="input-composer">
-              <input type="text" id="ai-input" placeholder="Ask Prucey AI anything or ask for study tips...">
+              <input type="text" id="ai-input" placeholder="Ask Prucey AI anything...">
               <button id="ai-send-btn"><i class="ri-send-plane-2-fill"></i></button>
             </div>
           </div>
         </section>
 
-        <!-- 6. CHAT ROOM VIEW -->
+        <!-- 5. CHAT ROOM VIEW -->
         <section id="view-chat" class="tab-view">
           <div class="chat-container">
             <div class="chat-header">
               <i class="ri-discuss-fill"></i>
               <div>
                 <h3>Global Lounge</h3>
-                <span class="subtitle">Chat with everyone playing right now</span>
+                <span class="subtitle">Chat with everyone online</span>
               </div>
             </div>
             <div id="room-messages" class="messages-flow"></div>
             <div class="input-composer">
-              <input type="text" id="room-input" placeholder="Share tips, say hi...">
+              <input type="text" id="room-input" placeholder="Type a message...">
               <button id="room-send-btn"><i class="ri-send-plane-2-fill"></i></button>
             </div>
           </div>
         </section>
 
-        <!-- 7. ACCOUNT VIEW -->
+        <!-- 6. ACCOUNT VIEW -->
         <section id="view-account" class="tab-view">
           <div class="account-card">
-            <div class="account-banner"></div>
             <div class="account-body">
               <img id="profile-avatar-display" src="https://api.dicebear.com/7.x/bottts/svg?seed=Prucey" alt="Profile">
               <div class="account-inputs">
                 <label>Display Name</label>
                 <input type="text" id="account-name-input" placeholder="Your username...">
                 
-                <label>Avatar Seed (Type any word to change face)</label>
-                <input type="text" id="account-seed-input" placeholder="e.g. Shadow, Pixel, Ninja...">
+                <label>Avatar Seed (Type any word to customize)</label>
+                <input type="text" id="account-seed-input" placeholder="e.g. Sonic, Neon, Cyber...">
                 
                 <button id="save-account-btn" class="primary-btn"><i class="ri-save-3-fill"></i> Save Profile</button>
               </div>
@@ -214,18 +208,11 @@
           </div>
         </section>
 
-        <!-- 8. SETTINGS & PANIC VIEW -->
+        <!-- 7. TAB CLOAKER VIEW -->
         <section id="view-settings" class="tab-view">
           <div class="settings-card">
-            <h3><i class="ri-alarm-warning-line"></i> Panic Switch Setup</h3>
-            <p>Hitting <code>`</code> (tilde key) will instantly launch this screen.</p>
-            <input type="text" id="panic-url" value="https://classroom.google.com" placeholder="Redirect URL">
-            <button id="panic-btn" class="danger-btn">Test Panic Redirect</button>
-          </div>
-
-          <div class="settings-card">
             <h3><i class="ri-shield-keyhole-line"></i> Tab Cloaker</h3>
-            <p>Change your browser tab's name and icon to disguise it as schoolwork.</p>
+            <p>Disguise your browser tab as schoolwork:</p>
             <div class="cloak-options">
               <button class="cloak-btn" data-title="Google Classroom" data-icon="https://ssl.gstatic.com/classroom/favicon.png">
                 <i class="ri-google-fill"></i> Google Classroom
@@ -247,11 +234,11 @@
     </div>
   </div>
 
-  <!-- EMBED PLAYER MODAL (GAMES & MOVIES) -->
+  <!-- EMBED PLAYER MODAL -->
   <div id="media-modal" class="modal hidden">
     <div class="modal-box">
       <div class="modal-nav">
-        <h3 id="modal-title">Viewer</h3>
+        <h3 id="modal-title">Game Player</h3>
         <div class="modal-btn-row">
           <button id="modal-reload" class="icon-btn"><i class="ri-restart-line"></i></button>
           <button id="modal-fullscreen" class="icon-btn"><i class="ri-fullscreen-fill"></i></button>
