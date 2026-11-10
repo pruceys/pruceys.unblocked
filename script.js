@@ -1,4 +1,4 @@
-// ================= POKI GAMES MIRROR REPO =================
+// ================= POKI GAMES REPOSITORY =================
 const POKI_GAMES = [
   {
     id: "subway-surfers",
@@ -38,48 +38,20 @@ const POKI_GAMES = [
   }
 ];
 
-// ================= MOVIES & CINEMA =================
-const MOVIES = [
-  {
-    title: "Big Buck Bunny (Full Movie)",
-    thumb: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&q=80",
-    url: "https://www.youtube-nocookie.com/embed/aqz-KE-bpKQ?autoplay=1"
-  },
-  {
-    title: "Tears of Steel (Sci-Fi Short)",
-    thumb: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400&q=80",
-    url: "https://www.youtube-nocookie.com/embed/R6MlUcmOul8?autoplay=1"
-  },
-  {
-    title: "Open Cinema Stream Hub",
-    thumb: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=80",
-    url: "https://vidsrc.to"
-  }
-];
-
-// ================= LOFI STATIONS =================
-const TRACKS = [
-  { title: "Lofi Hip Hop Chill Beats", artist: "Lofi Girl Stream", src: "https://streams.ilovemusic.de/iloveradio17.mp3" },
-  { title: "Synthwave Gaming Chill", artist: "Retro Arcade", src: "https://stream.syntheticfm.com/stream" },
-  { title: "Calm Study Piano", artist: "Ambient Sound", src: "https://stream.zeno.fm/0r0xa792kwzuv" }
-];
-
 // Browser tabs state
 let browserTabs = [{ id: "tab-1", title: "Games", tabTarget: "games" }];
 let currentTabId = "tab-1";
-let currentTrackIdx = 0;
 
 // ================= INITIALIZE =================
 document.addEventListener("DOMContentLoaded", () => {
   setupAccount();
   setupSidebarAndTabs();
   setupPokiGames();
-  setupMovies();
-  setupMusicPlayer();
+  setupSpotify();
   setupMiniBrowser();
   setupSeparateAI();
   setupSeparateChat();
-  setupPanicAndCloaking();
+  setupTabCloaking();
 });
 
 // ================= ACCOUNT SYSTEM =================
@@ -107,7 +79,7 @@ function setupAccount() {
     const newAcc = { name, seed };
     localStorage.setItem("pruceys_account", JSON.stringify(newAcc));
     applyAccount(newAcc);
-    alert("Profile saved successfully!");
+    alert("Profile saved!");
   });
 
   document.getElementById("quick-profile-btn").addEventListener("click", () => {
@@ -188,10 +160,11 @@ function updateTabTitle(id, newTitle, newTarget) {
   }
 }
 
-// ================= POKI GAMES =================
+// ================= POKI GAMES SECTION =================
 function setupPokiGames() {
   const grid = document.getElementById("games-grid");
   const search = document.getElementById("game-search");
+  const pokiSiteBtn = document.getElementById("open-poki-frame-btn");
 
   function render(list) {
     grid.innerHTML = "";
@@ -213,88 +186,37 @@ function setupPokiGames() {
     const val = e.target.value.toLowerCase();
     render(POKI_GAMES.filter(g => g.title.toLowerCase().includes(val)));
   });
-}
 
-// ================= MOVIES =================
-function setupMovies() {
-  const grid = document.getElementById("movies-grid");
-  grid.innerHTML = "";
-
-  MOVIES.forEach(m => {
-    const card = document.createElement("div");
-    card.className = "interactive-card";
-    card.innerHTML = `
-      <img src="${m.thumb}" alt="${m.title}">
-      <div class="card-title">${m.title}</div>
-    `;
-    card.addEventListener("click", () => openMediaModal(m.title, m.url));
-    grid.appendChild(card);
+  // Open the official Poki.com portal inside the viewer
+  pokiSiteBtn.addEventListener("click", () => {
+    openMediaModal("Poki Games Official", "https://poki.com");
   });
 }
 
-// ================= MUSIC PLAYER =================
-function setupMusicPlayer() {
-  const audio = document.getElementById("audio-player");
-  const playBtn = document.getElementById("play-track-btn");
-  const playIcon = document.getElementById("play-icon");
-  const vinyl = document.getElementById("vinyl-disc");
-  const tracksContainer = document.getElementById("tracks-list");
-  const volumeSlider = document.getElementById("music-volume");
+// ================= SPOTIFY MUSIC SECTION =================
+function setupSpotify() {
+  const spotifyFrame = document.getElementById("spotify-iframe");
+  const playlistButtons = document.querySelectorAll(".spotify-tab-btn");
 
-  function loadTrack(index) {
-    currentTrackIdx = index;
-    const track = TRACKS[index];
-    audio.src = track.src;
-    document.getElementById("current-track-title").textContent = track.title;
-    document.getElementById("current-track-artist").textContent = track.artist;
-    updateTracklistUI();
-  }
-
-  function updateTracklistUI() {
-    tracksContainer.innerHTML = "";
-    TRACKS.forEach((t, i) => {
-      const item = document.createElement("div");
-      item.className = `track-item ${i === currentTrackIdx ? "active" : ""}`;
-      item.innerHTML = `<span>${t.title}</span><small>${t.artist}</small>`;
-      item.addEventListener("click", () => {
-        loadTrack(i);
-        audio.play();
-        playIcon.className = "ri-pause-fill";
-        vinyl.classList.add("spinning");
-      });
-      tracksContainer.appendChild(item);
+  // Switch Spotify Playlists
+  playlistButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      playlistButtons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const uri = btn.getAttribute("data-spotify");
+      spotifyFrame.src = `https://open.spotify.com/embed/${uri}?utm_source=generator&theme=0`;
     });
-  }
-
-  playBtn.addEventListener("click", () => {
-    if (audio.paused) {
-      audio.play();
-      playIcon.className = "ri-pause-fill";
-      vinyl.classList.add("spinning");
-    } else {
-      audio.pause();
-      playIcon.className = "ri-play-fill";
-      vinyl.classList.remove("spinning");
-    }
   });
 
-  document.getElementById("next-track-btn").addEventListener("click", () => {
-    currentTrackIdx = (currentTrackIdx + 1) % TRACKS.length;
-    loadTrack(currentTrackIdx);
-    audio.play();
+  // Open official Spotify Login directly in a clean pop-up window
+  document.getElementById("open-spotify-login").addEventListener("click", () => {
+    window.open("https://accounts.spotify.com/en/login", "SpotifyLogin", "width=500,height=700");
   });
 
-  document.getElementById("prev-track-btn").addEventListener("click", () => {
-    currentTrackIdx = (currentTrackIdx - 1 + TRACKS.length) % TRACKS.length;
-    loadTrack(currentTrackIdx);
-    audio.play();
+  // Open full Spotify Web Player in a new window/tab
+  document.getElementById("open-spotify-web").addEventListener("click", () => {
+    window.open("https://open.spotify.com", "_blank");
   });
-
-  volumeSlider.addEventListener("input", (e) => {
-    audio.volume = e.target.value;
-  });
-
-  loadTrack(0);
 }
 
 // ================= MINI BROWSER =================
@@ -323,7 +245,7 @@ function setupMiniBrowser() {
   });
 }
 
-// ================= SEPARATE AI ASSISTANT =================
+// ================= AI ASSISTANT =================
 function setupSeparateAI() {
   const input = document.getElementById("ai-input");
   const btn = document.getElementById("ai-send-btn");
@@ -337,9 +259,9 @@ function setupSeparateAI() {
 
     setTimeout(() => {
       const answers = [
-        "Pruceys Unblocked+ is running smooth! Subway Surfers or Drive Mad are top picks right now.",
-        "Remember to use the Tab Cloaker in Settings if you need to hide your active window.",
-        "I'm here to answer study questions or help you navigate games!"
+        "Pruceys Unblocked+ is up and running! Need recommendations for Poki games?",
+        "You can stream your Spotify playlists right from the Music tab while gaming.",
+        "Use the Tab Cloaker in settings whenever you need to disguise the site."
       ];
       appendBubble(box, answers[Math.floor(Math.random() * answers.length)], "ai");
     }, 500);
@@ -349,7 +271,7 @@ function setupSeparateAI() {
   input.addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
 }
 
-// ================= SEPARATE PUBLIC CHAT =================
+// ================= LIVE CHAT =================
 function setupSeparateChat() {
   const input = document.getElementById("room-input");
   const btn = document.getElementById("room-send-btn");
@@ -403,21 +325,8 @@ document.getElementById("modal-fullscreen").addEventListener("click", () => {
   else document.exitFullscreen?.();
 });
 
-// ================= PANIC SWITCH & CLOAKER =================
-function setupPanicAndCloaking() {
-  function triggerPanic() {
-    const url = document.getElementById("panic-url").value.trim() || "https://classroom.google.com";
-    window.location.replace(url);
-  }
-
-  document.getElementById("panic-btn").addEventListener("click", triggerPanic);
-  document.getElementById("header-panic-btn").addEventListener("click", triggerPanic);
-
-  window.addEventListener("keydown", (e) => {
-    if (["INPUT", "TEXTAREA"].includes(e.target.tagName)) return;
-    if (e.key === "`" || e.key === "~") triggerPanic();
-  });
-
+// ================= TAB CLOAKER ONLY =================
+function setupTabCloaking() {
   document.querySelectorAll(".cloak-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       document.title = btn.getAttribute("data-title");
