@@ -10,17 +10,19 @@
   --primary-light: #8b5cf6;
   --primary-glow: rgba(124, 58, 237, 0.35);
 
+  --spotify-green: #1db954;
+  --spotify-green-hover: #1ed760;
+
   --text-main: #f8fafc;
   --text-dim: #94a3b8;
   --border: #232d46;
-  --danger: #ef4444;
 }
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 body {
@@ -30,14 +32,13 @@ body {
   height: 100vh;
 }
 
-/* App Flexbox */
 .app-layout {
   display: flex;
   height: 100vh;
   width: 100vw;
 }
 
-/* ================= 1. LEFT SIDEBAR ================= */
+/* ================= 1. SIDEBAR ================= */
 .sidebar {
   width: 240px;
   background: var(--bg-sidebar);
@@ -131,7 +132,7 @@ body {
   gap: 6px;
 }
 
-/* ================= 2. TOP BROWSER TAB BAR ================= */
+/* ================= 2. TOP TAB BAR ================= */
 .main-wrapper {
   flex: 1;
   display: flex;
@@ -204,12 +205,6 @@ body {
   color: #fff;
 }
 
-.top-bar-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
 .account-pill {
   display: flex;
   align-items: center;
@@ -223,28 +218,12 @@ body {
 }
 
 .account-pill img {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
 }
 
-.panic-quick-btn {
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid var(--danger);
-  color: #fca5a5;
-  padding: 5px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.panic-quick-btn:hover {
-  background: var(--danger);
-  color: #fff;
-}
-
-/* ================= 3. VIEWPORT VIEWS ================= */
+/* ================= 3. VIEWPORT CONTENT ================= */
 .viewport {
   flex: 1;
   overflow-y: auto;
@@ -267,6 +246,12 @@ body {
   margin-bottom: 24px;
 }
 
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
 .subtitle {
   color: var(--text-dim);
   font-size: 0.9rem;
@@ -281,7 +266,7 @@ body {
   border: 1px solid var(--border);
   padding: 8px 14px;
   border-radius: 8px;
-  width: 300px;
+  width: 260px;
 }
 
 .search-box input {
@@ -292,7 +277,7 @@ body {
   width: 100%;
 }
 
-/* Card Grids (Games & Movies) */
+/* Games Grid */
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -305,7 +290,7 @@ body {
   border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  transition: transform 0.2s, border-color 0.2s;
   display: flex;
   flex-direction: column;
 }
@@ -313,7 +298,6 @@ body {
 .interactive-card:hover {
   transform: translateY(-5px);
   border-color: var(--primary);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.4);
 }
 
 .interactive-card img {
@@ -329,7 +313,113 @@ body {
   text-align: center;
 }
 
-/* ================= 4. BROWSER VIEW ================= */
+/* ================= 4. SPOTIFY SECTION ================= */
+.spotify-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.spotify-header-banner {
+  background: linear-gradient(135deg, #111e17, var(--bg-panel));
+  border: 1px solid #1db95444;
+  border-radius: 14px;
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.spotify-banner-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.spotify-logo-wrap {
+  width: 50px;
+  height: 50px;
+  background: var(--spotify-green);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: #000;
+}
+
+.spotify-banner-btns {
+  display: flex;
+  gap: 10px;
+}
+
+.spotify-btn {
+  background: var(--spotify-green);
+  color: #000;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s;
+}
+
+.spotify-btn:hover {
+  background: var(--spotify-green-hover);
+}
+
+.secondary-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.secondary-btn:hover {
+  background: var(--bg-hover);
+}
+
+.spotify-playlists-nav {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+}
+
+.spotify-tab-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.spotify-tab-btn.active, .spotify-tab-btn:hover {
+  background: var(--spotify-green);
+  color: #000;
+  border-color: var(--spotify-green);
+}
+
+.spotify-embed-card {
+  background: var(--bg-panel);
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+/* ================= 5. MINI BROWSER ================= */
 .browser-controls {
   display: flex;
   gap: 8px;
@@ -400,103 +490,7 @@ body {
   background: #fff;
 }
 
-/* ================= 5. MUSIC PLAYER ================= */
-.music-station {
-  display: grid;
-  grid-template-columns: 340px 1fr;
-  gap: 24px;
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.now-playing-card, .tracklist-card {
-  background: var(--bg-panel);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.vinyl-art {
-  width: 160px;
-  height: 160px;
-  background: #111;
-  border: 6px solid #222;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 5rem;
-  color: var(--primary);
-  margin-bottom: 18px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.6);
-}
-
-.vinyl-art.spinning {
-  animation: spin 5s linear infinite;
-}
-
-@keyframes spin {
-  100% { transform: rotate(360deg); }
-}
-
-.music-controls {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-  margin: 20px 0;
-}
-
-.play-btn {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: var(--primary);
-  font-size: 1.4rem;
-}
-
-.volume-slider-wrap {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-}
-
-.volume-slider-wrap input {
-  flex: 1;
-  accent-color: var(--primary);
-}
-
-.tracklist-card {
-  align-items: flex-start;
-}
-
-.tracks-list {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 14px;
-}
-
-.track-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 14px;
-  background: var(--bg-card);
-  border-radius: 8px;
-  cursor: pointer;
-  border: 1px solid transparent;
-}
-
-.track-item:hover, .track-item.active {
-  border-color: var(--primary);
-  background: var(--bg-hover);
-}
-
-/* ================= 6. CHAT & AI FLOWS ================= */
+/* ================= 6. CHAT & AI ================= */
 .chat-container {
   max-width: 800px;
   margin: 0 auto;
@@ -515,11 +509,6 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-}
-
-.chat-header i {
-  font-size: 1.5rem;
-  color: var(--primary-light);
 }
 
 .status-online {
@@ -548,13 +537,11 @@ body {
   align-self: flex-end;
   background: var(--primary);
   color: #fff;
-  border-bottom-right-radius: 2px;
 }
 
 .chat-bubble.ai, .chat-bubble.room {
   align-self: flex-start;
   background: var(--bg-card);
-  border-bottom-left-radius: 2px;
 }
 
 .input-composer {
@@ -581,10 +568,9 @@ body {
   padding: 0 18px;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 1.1rem;
 }
 
-/* ================= 7. ACCOUNT & SETTINGS ================= */
+/* ================= 7. ACCOUNT & CLOAKER ================= */
 .account-card, .settings-card {
   max-width: 600px;
   margin: 0 auto 20px;
@@ -615,7 +601,7 @@ body {
   gap: 8px;
 }
 
-.account-inputs input, .settings-card input {
+.account-inputs input {
   padding: 10px 14px;
   background: var(--bg-dark);
   border: 1px solid var(--border);
@@ -632,16 +618,6 @@ body {
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-}
-
-.danger-btn {
-  background: var(--danger);
-  border: none;
-  padding: 10px 16px;
-  color: #fff;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
 }
 
 .cloak-options {
@@ -667,7 +643,7 @@ body {
   border-color: var(--primary);
 }
 
-/* ================= 8. MODAL VIEWER ================= */
+/* ================= 8. MODAL ================= */
 .modal {
   position: fixed;
   inset: 0;
