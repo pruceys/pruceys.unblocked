@@ -3,465 +3,267 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prucey Hub</title>
-  <link rel="icon" id="page-favicon" href="https://img.icons8.com/color/48/controller.png">
-
-  <style>
-    :root {
-      --bg: #0f172a;
-      --card-bg: #1e293b;
-      --accent: #6366f1;
-      --accent-hover: #4f46e5;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --border: #334155;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* Navbar */
-    header {
-      background: rgba(15, 23, 42, 0.9);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--border);
-      padding: 12px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 50;
-    }
-
-    .brand {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    nav {
-      display: flex;
-      gap: 8px;
-    }
-
-    .nav-item {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      padding: 8px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.2s;
-    }
-
-    .nav-item:hover, .nav-item.active {
-      background: var(--card-bg);
-      color: #fff;
-    }
-
-    .nav-item.active {
-      border-bottom: 2px solid var(--accent);
-    }
-
-    .coin-badge {
-      background: #eab308;
-      color: #000;
-      font-weight: bold;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 0.9rem;
-    }
-
-    /* Container Views */
-    main {
-      flex: 1;
-      padding: 24px;
-      max-width: 1200px;
-      margin: 0 auto;
-      width: 100%;
-    }
-
-    .tab-view {
-      display: none;
-    }
-
-    .tab-view.active {
-      display: block;
-    }
-
-    /* Games View */
-    .search-bar {
-      margin-bottom: 20px;
-    }
-
-    .search-bar input {
-      width: 100%;
-      max-width: 400px;
-      padding: 12px 16px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: var(--card-bg);
-      color: #fff;
-      font-size: 1rem;
-    }
-
-    .games-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 16px;
-    }
-
-    .game-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      cursor: pointer;
-      transition: transform 0.2s, border-color 0.2s;
-    }
-
-    .game-card:hover {
-      transform: translateY(-4px);
-      border-color: var(--accent);
-    }
-
-    .game-card img {
-      width: 100%;
-      height: 140px;
-      object-fit: cover;
-    }
-
-    .game-card-title {
-      padding: 12px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      text-align: center;
-    }
-
-    /* Game Modal */
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.85);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 100;
-      padding: 20px;
-    }
-
-    .modal.hidden {
-      display: none;
-    }
-
-    .modal-content {
-      background: var(--card-bg);
-      border-radius: 12px;
-      width: 100%;
-      max-width: 900px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-    }
-
-    .modal-header {
-      padding: 12px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .modal-actions button, .btn {
-      background: var(--border);
-      border: none;
-      color: #fff;
-      padding: 6px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-left: 6px;
-    }
-
-    .modal-actions button:hover, .btn:hover {
-      background: var(--accent);
-    }
-
-    #player-container iframe, #browser-frame {
-      width: 100%;
-      height: 550px;
-      border: none;
-      background: #000;
-      display: block;
-    }
-
-    /* Browser View */
-    .browser-bar {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
-    .browser-bar input {
-      flex: 1;
-      padding: 10px 14px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: var(--card-bg);
-      color: #fff;
-    }
-
-    .bookmarks {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-
-    /* Chat & AI */
-    .chat-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-
-    .chat-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      display: flex;
-      flex-direction: column;
-      height: 480px;
-      padding: 16px;
-    }
-
-    .chat-box {
-      flex: 1;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      padding: 8px 0;
-    }
-
-    .chat-bubble {
-      padding: 8px 12px;
-      border-radius: 8px;
-      max-width: 80%;
-      font-size: 0.9rem;
-      line-height: 1.4;
-    }
-
-    .chat-bubble.user {
-      align-self: flex-end;
-      background: var(--accent);
-      color: #fff;
-    }
-
-    .chat-bubble.ai {
-      align-self: flex-start;
-      background: var(--border);
-    }
-
-    .chat-input-area {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .chat-input-area input {
-      flex: 1;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: var(--bg);
-      color: #fff;
-    }
-
-    /* Shop View */
-    .shop-items {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 16px;
-      margin-top: 20px;
-    }
-
-    .shop-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-      text-align: center;
-    }
-
-    /* Settings View */
-    .settings-group {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-
-    .settings-group h3 {
-      margin-bottom: 12px;
-    }
-
-    .settings-group input {
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: var(--bg);
-      color: #fff;
-      width: 100%;
-      max-width: 400px;
-      margin-bottom: 10px;
-    }
-  </style>
+  <title>Pruceys Unblocked+</title>
+  <link rel="icon" id="page-favicon" href="https://img.icons8.com/fluency/48/controller.png">
+  <link rel="stylesheet" href="style.css">
+  <!-- Remix Icons for crisp UI icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 </head>
 <body>
 
-  <!-- Top Navigation Bar -->
-  <header>
-    <div class="brand">🎮 Prucey Hub</div>
-    <nav>
-      <button class="nav-item active" data-tab="games">Games</button>
-      <button class="nav-item" data-tab="browser">Browser</button>
-      <button class="nav-item" data-tab="chat">AI & Chat</button>
-      <button class="nav-item" data-tab="shop">Shop</button>
-      <button class="nav-item" data-tab="settings">Settings</button>
-    </nav>
-    <div class="coin-badge">💰 <span id="user-coins">0</span></div>
-  </header>
-
-  <main>
-    <!-- 1. Games Tab -->
-    <section id="view-games" class="tab-view active">
-      <div class="search-bar">
-        <input type="text" id="game-search" placeholder="Search games...">
-      </div>
-      <div id="games-grid" class="games-grid"></div>
-    </section>
-
-    <!-- 2. Mini-Browser Tab -->
-    <section id="view-browser" class="tab-view">
-      <div class="bookmarks">
-        <button class="btn b-mark" data-url="https://duckduckgo.com">DuckDuckGo</button>
-        <button class="btn b-mark" data-url="https://bing.com">Bing</button>
-        <button class="btn b-mark" data-url="https://wikipedia.org">Wikipedia</button>
-      </div>
-      <div class="browser-bar">
-        <input type="text" id="browser-url" placeholder="Search DuckDuckGo or enter URL...">
-        <button id="browser-go" class="btn">Go</button>
-        <button id="b-reload" class="btn">Reload</button>
-        <button id="browser-fullscreen" class="btn">Fullscreen</button>
-      </div>
-      <iframe id="browser-frame" src="about:blank"></iframe>
-    </section>
-
-    <!-- 3. AI & Chat Tab -->
-    <section id="view-chat" class="tab-view">
-      <div class="chat-grid">
-        <!-- AI Bot -->
-        <div class="chat-card">
-          <h3>🤖 Prucey Assistant</h3>
-          <div id="ai-messages" class="chat-box"></div>
-          <div class="chat-input-area">
-            <input type="text" id="ai-input" placeholder="Ask AI something...">
-            <button id="ai-send-btn" class="btn">Send</button>
-          </div>
-        </div>
-
-        <!-- Global Chat Room -->
-        <div class="chat-card">
-          <h3>💬 Public Chat Room</h3>
-          <div id="room-messages" class="chat-box"></div>
-          <div class="chat-input-area">
-            <input type="text" id="room-input" placeholder="Type a message...">
-            <button id="room-send-btn" class="btn">Send</button>
-          </div>
+  <!-- App Wrapper -->
+  <div class="app-layout">
+    
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon"><i class="ri-gamepad-fill"></i></div>
+        <div class="brand-text">
+          <span class="brand-title">Pruceys</span>
+          <span class="brand-badge">Unblocked+</span>
         </div>
       </div>
-    </section>
 
-    <!-- 4. Shop Tab -->
-    <section id="view-shop" class="tab-view">
-      <h2>Item Shop</h2>
-      <p>Balance: <strong><span id="stat-coins">0</span> Coins</strong></p>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-tab="games">
+          <i class="ri-layout-grid-fill"></i><span>Poki Games</span>
+        </button>
+        <button class="nav-item" data-tab="browser">
+          <i class="ri-compass-3-fill"></i><span>Web Proxy</span>
+        </button>
+        <button class="nav-item" data-tab="movies">
+          <i class="ri-film-fill"></i><span>Cinema & Shows</span>
+        </button>
+        <button class="nav-item" data-tab="music">
+          <i class="ri-music-2-fill"></i><span>Lofi & Music</span>
+        </button>
+        <button class="nav-item" data-tab="ai">
+          <i class="ri-robot-2-fill"></i><span>AI Assistant</span>
+        </button>
+        <button class="nav-item" data-tab="chat">
+          <i class="ri-message-3-fill"></i><span>Live Chat</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="nav-item" data-tab="account">
+          <i class="ri-user-smile-fill"></i><span id="sidebar-user-label">My Account</span>
+        </button>
+        <button class="nav-item" data-tab="settings">
+          <i class="ri-settings-4-fill"></i><span>Settings & Cloak</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN APP CANVAS -->
+    <div class="main-wrapper">
       
-      <div class="shop-items">
-        <div class="shop-card">
-          <h4>Neon Theme</h4>
-          <p>Unlock cool neon highlights.</p>
-          <br>
-          <button class="btn buy-btn" data-cost="50">Buy for 50 Coins</button>
+      <!-- TOP BROWSER-STYLE TAB BAR -->
+      <header class="top-bar">
+        <div class="browser-tabs" id="tab-strip">
+          <!-- Dynamic browser tabs render here -->
         </div>
-        <div class="shop-card">
-          <h4>Secret Badge</h4>
-          <p>Shows next to your chat messages.</p>
-          <br>
-          <button class="btn buy-btn" data-cost="100">Buy for 100 Coins</button>
-        </div>
-        <div class="shop-card">
-          <h4>VIP Access</h4>
-          <p>Special perks and early titles.</p>
-          <br>
-          <button class="btn buy-btn" data-cost="300">Buy for 300 Coins</button>
-        </div>
-      </div>
-    </section>
+        <button class="new-tab-btn" id="add-tab-btn" title="New Tab"><i class="ri-add-line"></i></button>
 
-    <!-- 5. Settings / Panic Tab -->
-    <section id="view-settings" class="tab-view">
-      <div class="settings-group">
-        <h3>🚨 Panic Switch</h3>
-        <p>Press the <code>`</code> (tilde key) anytime, or click below to quickly redirect.</p>
-        <br>
-        <input type="text" id="panic-url" value="https://classroom.google.com" placeholder="Panic URL redirect">
-        <br>
-        <button id="panic-btn" class="btn" style="background: #ef4444;">Panic Redirect</button>
-      </div>
+        <div class="top-bar-right">
+          <div class="account-pill" id="quick-profile-btn">
+            <img id="header-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=Prucey" alt="Avatar">
+            <span id="header-username">Guest</span>
+          </div>
+          <button class="panic-quick-btn" id="header-panic-btn" title="Quick Panic (` or ~)">
+            <i class="ri-alarm-warning-fill"></i> Panic
+          </button>
+        </div>
+      </header>
 
-      <div class="settings-group">
-        <h3> disguise Tab Cloaker</h3>
-        <p>Change your browser tab name and icon on the fly:</p>
-        <br>
-        <button class="btn cloak-btn" data-title="Google Classroom" data-icon="https://ssl.gstatic.com/classroom/favicon.png">Google Classroom</button>
-        <button class="btn cloak-btn" data-title="Google Drive" data-icon="https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png">Google Drive</button>
-        <button class="btn cloak-btn" data-title="Canvas" data-icon="https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico">Canvas</button>
-      </div>
-    </section>
-  </main>
+      <!-- VIEWPORT PANELS -->
+      <main class="viewport">
 
-  <!-- Game Player Modal -->
-  <div id="game-modal" class="modal hidden">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 id="player-game-title">Game Player</h3>
-        <div class="modal-actions">
-          <button id="modal-reload">Reload</button>
-          <button id="modal-fullscreen">Fullscreen</button>
-          <button id="modal-close" style="background: #ef4444;">✕</button>
+        <!-- 1. POKI GAMES VIEW -->
+        <section id="view-games" class="tab-view active">
+          <div class="view-header">
+            <div>
+              <h2>Featured Poki Hits</h2>
+              <p class="subtitle">Direct mirrors of popular Poki HTML5 games.</p>
+            </div>
+            <div class="search-box">
+              <i class="ri-search-line"></i>
+              <input type="text" id="game-search" placeholder="Search Poki games...">
+            </div>
+          </div>
+          <div id="games-grid" class="cards-grid"></div>
+        </section>
+
+        <!-- 2. MINI BROWSER VIEW -->
+        <section id="view-browser" class="tab-view">
+          <div class="browser-controls">
+            <button id="b-back" class="icon-btn" title="Back"><i class="ri-arrow-left-line"></i></button>
+            <button id="b-reload" class="icon-btn" title="Reload"><i class="ri-refresh-line"></i></button>
+            <div class="url-input-wrap">
+              <i class="ri-lock-fill"></i>
+              <input type="text" id="browser-url" placeholder="Search with DuckDuckGo or enter URL...">
+              <button id="browser-go"><i class="ri-arrow-right-line"></i></button>
+            </div>
+            <button id="browser-fullscreen" class="icon-btn" title="Fullscreen"><i class="ri-fullscreen-line"></i></button>
+          </div>
+          <div class="quick-bookmarks">
+            <button class="b-mark" data-url="https://duckduckgo.com"><i class="ri-search-2-line"></i> DuckDuckGo</button>
+            <button class="b-mark" data-url="https://bing.com"><i class="ri-global-line"></i> Bing</button>
+            <button class="b-mark" data-url="https://en.wikipedia.org"><i class="ri-book-read-line"></i> Wikipedia</button>
+            <button class="b-mark" data-url="https://scratch.mit.edu"><i class="ri-code-box-line"></i> Scratch</button>
+          </div>
+          <div class="iframe-container">
+            <iframe id="browser-frame" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+          </div>
+        </section>
+
+        <!-- 3. MOVIES & SHOWS VIEW -->
+        <section id="view-movies" class="tab-view">
+          <div class="view-header">
+            <div>
+              <h2>Pruceys Cinema</h2>
+              <p class="subtitle">Watch movies and popular trailers directly.</p>
+            </div>
+          </div>
+          <div id="movies-grid" class="cards-grid"></div>
+        </section>
+
+        <!-- 4. MUSIC PLAYER VIEW -->
+        <section id="view-music" class="tab-view">
+          <div class="music-station">
+            <div class="now-playing-card">
+              <div class="vinyl-art" id="vinyl-disc">
+                <i class="ri-disc-fill"></i>
+              </div>
+              <h3 id="current-track-title">Chill Lofi Radio</h3>
+              <p id="current-track-artist">Lofi Boy Beats</p>
+              
+              <div class="music-controls">
+                <button id="prev-track-btn" class="icon-btn"><i class="ri-skip-back-fill"></i></button>
+                <button id="play-track-btn" class="icon-btn play-btn"><i class="ri-play-fill" id="play-icon"></i></button>
+                <button id="next-track-btn" class="icon-btn"><i class="ri-skip-forward-fill"></i></button>
+              </div>
+
+              <div class="volume-slider-wrap">
+                <i class="ri-volume-down-fill"></i>
+                <input type="range" id="music-volume" min="0" max="1" step="0.05" value="0.7">
+                <i class="ri-volume-up-fill"></i>
+              </div>
+              <audio id="audio-player"></audio>
+            </div>
+
+            <div class="tracklist-card">
+              <h3>Station Channels</h3>
+              <div class="tracks-list" id="tracks-list"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. AI ASSISTANT VIEW -->
+        <section id="view-ai" class="tab-view">
+          <div class="chat-container">
+            <div class="chat-header">
+              <i class="ri-robot-2-fill"></i>
+              <div>
+                <h3>Prucey AI</h3>
+                <span class="status-online">Online</span>
+              </div>
+            </div>
+            <div id="ai-messages" class="messages-flow"></div>
+            <div class="input-composer">
+              <input type="text" id="ai-input" placeholder="Ask Prucey AI anything or ask for study tips...">
+              <button id="ai-send-btn"><i class="ri-send-plane-2-fill"></i></button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. CHAT ROOM VIEW -->
+        <section id="view-chat" class="tab-view">
+          <div class="chat-container">
+            <div class="chat-header">
+              <i class="ri-discuss-fill"></i>
+              <div>
+                <h3>Global Lounge</h3>
+                <span class="subtitle">Chat with everyone playing right now</span>
+              </div>
+            </div>
+            <div id="room-messages" class="messages-flow"></div>
+            <div class="input-composer">
+              <input type="text" id="room-input" placeholder="Share tips, say hi...">
+              <button id="room-send-btn"><i class="ri-send-plane-2-fill"></i></button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. ACCOUNT VIEW -->
+        <section id="view-account" class="tab-view">
+          <div class="account-card">
+            <div class="account-banner"></div>
+            <div class="account-body">
+              <img id="profile-avatar-display" src="https://api.dicebear.com/7.x/bottts/svg?seed=Prucey" alt="Profile">
+              <div class="account-inputs">
+                <label>Display Name</label>
+                <input type="text" id="account-name-input" placeholder="Your username...">
+                
+                <label>Avatar Seed (Type any word to change face)</label>
+                <input type="text" id="account-seed-input" placeholder="e.g. Shadow, Pixel, Ninja...">
+                
+                <button id="save-account-btn" class="primary-btn"><i class="ri-save-3-fill"></i> Save Profile</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 8. SETTINGS & PANIC VIEW -->
+        <section id="view-settings" class="tab-view">
+          <div class="settings-card">
+            <h3><i class="ri-alarm-warning-line"></i> Panic Switch Setup</h3>
+            <p>Hitting <code>`</code> (tilde key) will instantly launch this screen.</p>
+            <input type="text" id="panic-url" value="https://classroom.google.com" placeholder="Redirect URL">
+            <button id="panic-btn" class="danger-btn">Test Panic Redirect</button>
+          </div>
+
+          <div class="settings-card">
+            <h3><i class="ri-shield-keyhole-line"></i> Tab Cloaker</h3>
+            <p>Change your browser tab's name and icon to disguise it as schoolwork.</p>
+            <div class="cloak-options">
+              <button class="cloak-btn" data-title="Google Classroom" data-icon="https://ssl.gstatic.com/classroom/favicon.png">
+                <i class="ri-google-fill"></i> Google Classroom
+              </button>
+              <button class="cloak-btn" data-title="Google Drive" data-icon="https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png">
+                <i class="ri-drive-fill"></i> Google Drive
+              </button>
+              <button class="cloak-btn" data-title="Canvas LMS" data-icon="https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico">
+                <i class="ri-book-open-fill"></i> Canvas
+              </button>
+              <button class="cloak-btn" data-title="Pruceys Unblocked+" data-icon="https://img.icons8.com/fluency/48/controller.png">
+                <i class="ri-refresh-line"></i> Reset Default
+              </button>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- EMBED PLAYER MODAL (GAMES & MOVIES) -->
+  <div id="media-modal" class="modal hidden">
+    <div class="modal-box">
+      <div class="modal-nav">
+        <h3 id="modal-title">Viewer</h3>
+        <div class="modal-btn-row">
+          <button id="modal-reload" class="icon-btn"><i class="ri-restart-line"></i></button>
+          <button id="modal-fullscreen" class="icon-btn"><i class="ri-fullscreen-fill"></i></button>
+          <button id="modal-close" class="icon-btn close-btn"><i class="ri-close-line"></i></button>
         </div>
       </div>
-      <div id="player-container">
-        <iframe id="player-iframe" src="about:blank"></iframe>
+      <div id="media-container" class="modal-iframe-wrap">
+        <iframe id="media-iframe" src="about:blank" allow="autoplay; fullscreen; gamepad"></iframe>
       </div>
     </div>
   </div>
 
-  <!-- Link your JavaScript file -->
   <script src="script.js"></script>
 </body>
 </html>
